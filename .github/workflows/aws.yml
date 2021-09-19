@@ -30,7 +30,4 @@ jobs:
         aws-region: ${{ env.AWS_REGION_NAME }}
 
     - name: Copy Deployment package to S3 bucket
-      run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.S3_BUCKET_NAME}}/
-      
-    - name: Print Happy Message
-      run: echo "CI pipeline completed successfully!"
+      run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.S3_BUCKET_NAME}}/scripts/
