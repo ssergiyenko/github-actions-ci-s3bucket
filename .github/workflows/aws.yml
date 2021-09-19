@@ -6,7 +6,7 @@ env:
   EB_ENV_NAME: "DemFreeze-env"
   DEPLOY_PACKAGE_NAME: "canary_script_${{ github.sha }}.zip"
   AWS_REGION_NAME: "eu-central-1"
-  CANARY_NAME: ${{ github.sha --short }}
+  CANARY_NAME: "${{ github.sha }}.slice(0, 10)"
 
 on:
   push:
@@ -50,8 +50,14 @@ jobs:
         aws-region: ${{ env.AWS_REGION_NAME }}
         
     - name: Create canary from S3 bucket
-      run: aws synthetics create-canary --name ${{ env.CANARY_NAME }} --code S3Bucket=basten.aws.bucket,S3Key=scripts/${{ env.DEPLOY_PACKAGE_NAME }},Handler=canary-script.handler --artifact-s3-location s3://basten.aws.bucket/canary/eu-central-1/${{ env.CANARY_NAME }} --execution-role-arn arn:aws:iam::354533817270:role/CloudWatchSyntheticsRole-basten-bucket --schedule Expression="rate(0 minute)" --runtime-version syn-nodejs-puppeteer-3.2
-      
+      run: aws synthetics create-canary
+             --name ${{ env.CANARY_NAME }}
+             --code S3Bucket=basten.aws.bucket,S3Key=scripts/${{ env.DEPLOY_PACKAGE_NAME }},Handler=canary-script.handler
+             --artifact-s3-location s3://basten.aws.bucket/canary/eu-central-1/${{ env.CANARY_NAME }}
+             --execution-role-arn arn:aws:iam::354533817270:role/CloudWatchSyntheticsRole-basten-bucket
+             --schedule Expression="rate(0 minute)"
+             --runtime-version syn-nodejs-puppeteer-3.2
+
   start_canary:
     runs-on: ubuntu-latest
     needs: [create_canary]
