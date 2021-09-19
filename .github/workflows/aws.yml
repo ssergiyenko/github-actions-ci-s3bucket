@@ -41,12 +41,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION_NAME }}
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ env.AWS_REGION_NAME }}
         
     - name: Create canary from S3 bucket
       run: aws synthetics create-canary --name super-canary --code S3Bucket=basten.aws.bucket,S3Key=scripts/${{ env.DEPLOY_PACKAGE_NAME }},Handler=canary-script.handler --artifact-s3-location s3://basten.aws.bucket/canary/eu-central-1/super-canary --execution-role-arn arn:aws:iam::354533817270:role/CloudWatchSyntheticsRole-basten-bucket --schedule Expression="rate(0 minute)" --runtime-version syn-nodejs-puppeteer-3.2
