@@ -7,7 +7,7 @@ env:
   DEPLOY_PACKAGE_NAME: "canary_script_${{ github.sha }}.zip"
   AWS_REGION_NAME: "eu-central-1"
 #   CANARY_NAME: "test-canary"
-  CANARY_NAME: "${{ github.sha::8 }}"
+  CANARY_NAME: ${github.sha::8}
 
 on:
   push:
