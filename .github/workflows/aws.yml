@@ -7,6 +7,7 @@ env:
   DEPLOY_PACKAGE_NAME: "canary_script_${{ github.sha }}.zip"
   AWS_REGION_NAME: "eu-central-1"
   SHA8: $(echo ${GITHUB_SHA} | cut -c1-8)
+  CANARY_NAME: "canary-$(echo ${GITHUB_SHA} | cut -c1-8)"
 
 on:
   push:
@@ -37,8 +38,6 @@ jobs:
   create_canary:
     runs-on: ubuntu-latest
     needs: [ci]
-    env:
-      CANARY_NAME: "canary-${{ env.SHA8 }}"
     
     steps:
     - name: Checkout
@@ -53,9 +52,9 @@ jobs:
         
     - name: Create canary from S3 bucket
       run: aws synthetics create-canary
-             --name ${{ CANARY_NAME }}
+             --name ${{ env.CANARY_NAME }}
              --code S3Bucket=basten.aws.bucket,S3Key=scripts/${{ env.DEPLOY_PACKAGE_NAME }},Handler=canary-script.handler
-             --artifact-s3-location s3://basten.aws.bucket/canary/eu-central-1/${{ CANARY_NAME }}
+             --artifact-s3-location s3://basten.aws.bucket/canary/eu-central-1/${{ env.CANARY_NAME }}
              --execution-role-arn arn:aws:iam::354533817270:role/CloudWatchSyntheticsRole-basten-bucket
              --schedule Expression="rate(0 minute)"
              --runtime-version syn-nodejs-puppeteer-3.2
@@ -63,9 +62,7 @@ jobs:
   start_canary:
     runs-on: ubuntu-latest
     needs: [create_canary]
-    env:
-      CANARY_NAME: "canary-${{ env.SHA8 }}"
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -78,4 +75,4 @@ jobs:
         aws-region: ${{ env.AWS_REGION_NAME }}
         
     - name: Start canary
-      run: aws synthetics start-canary --name ${{ CANARY_NAME }}
+      run: aws synthetics start-canary --name ${{ env.CANARY_NAME }}
