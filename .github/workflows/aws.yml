@@ -6,7 +6,8 @@ env:
   EB_ENV_NAME: "DemFreeze-env"
   DEPLOY_PACKAGE_NAME: "canary_script_${{ github.sha }}.zip"
   AWS_REGION_NAME: "eu-central-1"
-  CANARY_NAME: "${{ github.sha | slice(0, 7) }}"
+  CANARY_NAME: "test-canary"
+#   CANARY_NAME: "${{ github.sha }}"
 
 on:
   push:
